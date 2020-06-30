@@ -1,0 +1,27 @@
+[package]
+name = "ca03"
+version = "0.1.0"
+authors = ["simdimdim <simdimdim@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies.pistoncore-sdl2_window]
+    git = "https://github.com/PistonDevelopers/sdl2_window"
+
+[dependencies]
+sdl2="*"
+piston_window = "*"
+piston2d-deform_grid = "*"
+
+gfx = "*"
+gfx_device_gl = "*"
+shader_version = "*"
+
+
+camera_controllers="*"
+
+nalgebra="*"
+rand = "*"
+
+find_folder = "*"
