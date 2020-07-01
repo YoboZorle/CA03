@@ -12,7 +12,9 @@ edition = "2018"
 [dependencies]
 sdl2="*"
 piston_window = "*"
+pistoncore-window = "*"
 piston2d-deform_grid = "*"
+piston2d-gfx_graphics = "*"
 
 gfx = "*"
 gfx_device_gl = "*"
