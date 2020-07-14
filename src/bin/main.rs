@@ -8,6 +8,7 @@ use sdl2_window::Sdl2Window;
 use piston_window::*;
 
 use ca03::game::overlay::Grid;
+use ca03::game::overlay::Overlay;
 use ca03::game::world::World;
 
 fn main() {
@@ -26,6 +27,8 @@ fn main() {
     let world = World::new();
     let mut grid = Grid::default();
 
+    let mut cursor = [0.0, 0.0];
+
     while let Some(e) = window.next() {
         window.draw_2d(&e, |c, g, _| {
             clear([0.0, 0.0, 0.0, 1.0], g);
@@ -37,14 +40,22 @@ fn main() {
                 g,
             );
         });
+        e.mouse_cursor(|pos| {
+            cursor = pos;
+        });
+        e.mouse_scroll(|d| {
+            println!(
+                "Scrolled mouse 'h:{}, v:{}', x:{} y:{}",
+                d[0], d[1], cursor[0], cursor[1]
+            );
+            grid.set_size(grid.size() + d[1] as i32);
+        });
         if let Some(button) = e.press_args() {
             use piston_window::Button::Keyboard;
 
             if button == Keyboard(Key::W) {
                 grid.toggle();
             } else if button == Keyboard(Key::R) {
-                grid.set_size(80);
-            } else if button == Keyboard(Key::E) {
                 grid.set_size(20);
             }
         }

@@ -13,11 +13,15 @@ pub struct Grid {
 pub trait Overlay {
     // fn draw(&self);
     fn size(&self) -> i32;
+    fn toggle(&mut self);
 }
 
 impl Overlay for Grid {
     fn size(&self) -> i32 {
         self.size as i32
+    }
+    fn toggle(&mut self) {
+        self.show = !self.show;
     }
 }
 impl Default for Grid {
@@ -35,9 +39,7 @@ impl Grid {
         let size = size;
         Self { show, ar, size }
     }
-    pub fn toggle(&mut self) {
-        self.show = !self.show;
-    }
+
     pub fn set_size(&mut self, s: i32) -> &mut Self {
         self.size = s as f64;
         self
@@ -49,29 +51,24 @@ impl Grid {
         g: &mut GfxGraphics<Resources, CommandBuffer>,
     ) {
         if self.show {
-            for i in 0..((((screen.width - 1.) / self.size) as i32) + 1) {
+            let h = (screen.width / self.size) - 1. / self.size;
+            let w = (screen.height / self.size) - 1. / self.size;
+            (0..(self.size + 1.) as i32).for_each(|i| {
                 line(
                     [1.; 4],
                     1.0,
-                    [
-                        i as f64 * self.size,
-                        0.,
-                        i as f64 * self.size,
-                        screen.height,
-                    ],
+                    [i as f64 * h, 0., i as f64 * h, screen.height],
                     c.transform,
                     g,
                 );
-            }
-            for i in 0..((((screen.height - 1.) / self.size) as i32) + 1) {
                 line(
                     [1.; 4],
                     1.0,
-                    [0., i as f64 * self.size, screen.width, i as f64 * self.size],
+                    [0., i as f64 * w, screen.width, i as f64 * w],
                     c.transform,
                     g,
                 );
-            }
+            });
         }
     }
 }
