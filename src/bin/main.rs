@@ -4,6 +4,8 @@ use piston_window::{
 };
 
 use sdl2_window::Sdl2Window;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use piston_window::*;
 
@@ -21,33 +23,36 @@ fn main() {
         .build()
         .unwrap();
     window.set_capture_cursor(false);
-    let mut dim = window.window.draw_size();
-    let mut ar = dim.width / dim.height;
+
+    let dim = Rc::new(RefCell::new({
+        let Size { width, height } = window.window.draw_size();
+        (width, height)
+    }));
+    let mut ar = dim.borrow().0 / dim.borrow().1;
 
     let world = World::new();
-    let mut grid = Grid::default();
+    let mut grid = Grid::new(true, 10., Some(ar), dim.clone());
 
     let mut cursor = [0.0, 0.0];
 
     while let Some(e) = window.next() {
         window.draw_2d(&e, |c, g, _| {
             clear([0.0, 0.0, 0.0, 1.0], g);
-            grid.update(dim, c, g);
-            rectangle(
-                [1.0, 0.0, 0.0, 1.0],
-                [50.0, 50.0, 100.0, 100.0],
-                c.transform,
-                g,
-            );
+            grid.update(dim.clone(), c, g);
+            // rectangle(
+            //     [1.0, 0.0, 0.0, 1.0],
+            //     [50.0, 50.0, 100.0, 100.0],
+            //     c.transform,
+            //     g,
+            // );
         });
         e.mouse_cursor(|pos| {
             cursor = pos;
         });
+        if let Some(Button::Mouse(button)) = e.press_args() {
+            println!("'{:?}'", grid.get_pos(cursor[0], cursor[1]));
+        }
         e.mouse_scroll(|d| {
-            println!(
-                "Scrolled mouse 'h:{}, v:{}', x:{} y:{}",
-                d[0], d[1], cursor[0], cursor[1]
-            );
             grid.set_size(grid.size() + d[1] as i32);
         });
         if let Some(button) = e.press_args() {
@@ -60,8 +65,12 @@ fn main() {
             }
         }
         if let Some(_) = e.resize_args() {
-            dim = window.window.draw_size();
-            ar = dim.width / dim.height;
+            *dim.borrow_mut() = {
+                let Size { width, height } = window.window.draw_size();
+                (width, height)
+            };
+            ar = dim.borrow().0 / dim.borrow().1;
+            grid.set_ar(ar);
         }
     }
 }

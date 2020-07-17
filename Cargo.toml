@@ -10,7 +10,7 @@ edition = "2018"
     git = "https://github.com/PistonDevelopers/sdl2_window"
 
 [dependencies]
-sdl2="*"
+sdl2 = "*"
 piston_window = "*"
 pistoncore-window = "*"
 piston2d-deform_grid = "*"
@@ -21,9 +21,10 @@ gfx_device_gl = "*"
 shader_version = "*"
 
 
-camera_controllers="*"
+camera_controllers = "*"
 
-nalgebra="*"
+nalgebra = "*"
 rand = "*"
+rayon = "*"
 
 find_folder = "*"
