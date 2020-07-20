@@ -11,7 +11,7 @@ use piston_window::*;
 
 use ca03::game::overlay::Grid;
 use ca03::game::overlay::Overlay;
-use ca03::game::world::World;
+use ca03::game::{world::World, Drawable};
 
 fn main() {
     let opengl = OpenGL::V4_5;
@@ -30,7 +30,7 @@ fn main() {
     }));
     let mut ar = dim.borrow().0 / dim.borrow().1;
 
-    let world = World::new();
+    let mut world = World::default();
     let mut grid = Grid::new(true, 10., Some(ar), dim.clone());
 
     let mut cursor = [0.0, 0.0];
@@ -38,19 +38,19 @@ fn main() {
     while let Some(e) = window.next() {
         window.draw_2d(&e, |c, g, _| {
             clear([0.0, 0.0, 0.0, 1.0], g);
-            grid.update(dim.clone(), c, g);
-            // rectangle(
-            //     [1.0, 0.0, 0.0, 1.0],
-            //     [50.0, 50.0, 100.0, 100.0],
-            //     c.transform,
-            //     g,
-            // );
+            grid.draw(ar, dim.clone(), c, g);
+            world.draw(grid.size() as f64, dim.clone(), c, g);
         });
         e.mouse_cursor(|pos| {
             cursor = pos;
         });
         if let Some(Button::Mouse(button)) = e.press_args() {
-            println!("'{:?}'", grid.get_pos(cursor[0], cursor[1]));
+            if button == MouseButton::Left {
+                world.add(grid.get_pos(cursor[0], cursor[1]));
+            }
+            if button == MouseButton::Right {
+                world.remove(grid.get_pos(cursor[0], cursor[1]));
+            }
         }
         e.mouse_scroll(|d| {
             grid.set_size(grid.size() + d[1] as i32);
@@ -65,11 +65,9 @@ fn main() {
             }
         }
         if let Some(_) = e.resize_args() {
-            *dim.borrow_mut() = {
-                let Size { width, height } = window.window.draw_size();
-                (width, height)
-            };
-            ar = dim.borrow().0 / dim.borrow().1;
+            let Size { width, height } = window.window.draw_size();
+            *dim.borrow_mut() = (width, height);
+            ar = width / height;
             grid.set_ar(ar);
         }
     }
