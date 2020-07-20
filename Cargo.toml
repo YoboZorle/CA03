@@ -1,25 +1,37 @@
 [package]
-name = "ca03"
-version = "0.1.0"
 authors = ["simdimdim <simdimdim@gmail.com>"]
 edition = "2018"
+name = "ca03"
+version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package.metadata.vcpkg]
+dependencies = ["sdl2"]
+git = "https://github.com/microsoft/vcpkg"
+rev = "6185aa7"
+
+[package.metadata.vcpkg.target]
+x86_64-pc-windows-msvc = {triplet = "x64-windows-static-md", install = ["sdl2"]}
+
+[target.'cfg(unix)'.dependencies.sdl2]
+version = "*"
+
+[target.'cfg(windows)'.dependencies.sdl2]
+features = ["static-link", "use-vcpkg"]
+version = "*"
 
 [dependencies.pistoncore-sdl2_window]
-    git = "https://github.com/PistonDevelopers/sdl2_window"
+git = "https://github.com/PistonDevelopers/sdl2_window"
 
 [dependencies]
-sdl2 = "*"
-piston_window = "*"
-pistoncore-window = "*"
 piston2d-deform_grid = "*"
 piston2d-gfx_graphics = "*"
+piston_window = "*"
+pistoncore-window = "*"
 
 gfx = "*"
 gfx_device_gl = "*"
 shader_version = "*"
-
 
 camera_controllers = "*"
 

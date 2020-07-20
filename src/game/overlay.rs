@@ -10,19 +10,18 @@ use std::rc::Rc;
 pub struct Grid {
     dim: Rc<RefCell<(f64, f64)>>,
     show: bool,
-    size: f64,
+    cellcount: f64,
     ar: f64,
 }
 
 pub trait Overlay {
-    // fn draw(&self);
     fn size(&self) -> i32;
     fn toggle(&mut self);
 }
 
 impl Overlay for Grid {
     fn size(&self) -> i32 {
-        self.size as i32
+        self.cellcount.abs() as i32
     }
     fn toggle(&mut self) {
         self.show = !self.show;
@@ -38,14 +37,14 @@ impl Drawable for Grid {
     ) {
         if self.show {
             let screen = screen.borrow();
-            let w = screen.1 / self.size * ar;
-            let h = (screen.0) / self.size;
-            // println!("{} {} {}", self.ar, h, w);
-            (0..(self.size + 1.) as i32)
+            let width = screen.0 / self.cellcount;
+            let height = screen.1 / self.cellcount * ar;
+            (0..self.cellcount as i32 + 1)
                 .map(|i| {
+                    let cs = screen.1 / 2. + (i as f64 - self.cellcount / 2.) * height;
                     (
-                        [i as f64 * h, 0., i as f64 * h, screen.1],
-                        [0., i as f64 * w, screen.0, i as f64 * w],
+                        [i as f64 * width, 0., i as f64 * width, screen.1],
+                        [0., cs, screen.0, cs],
                     )
                 })
                 .for_each(|(v, h)| {
@@ -60,11 +59,11 @@ impl Grid {
     pub fn new(show: bool, size: f64, ar: Option<f64>, dim: Rc<RefCell<(f64, f64)>>) -> Self {
         let show = show;
         let ar = ar.unwrap_or(1.);
-        let size = size;
+        let cellcount = size;
         Self {
             show,
             ar,
-            size,
+            cellcount,
             dim,
         }
     }
@@ -72,13 +71,13 @@ impl Grid {
     pub fn get_pos(&self, x: f64, y: f64) -> (i32, i32) {
         let d = self.dim.borrow();
         (
-            (x / d.0 * self.size) as i32,
-            ((y / d.1) * self.size / self.ar) as i32,
+            ((x - d.0 / 2.) / (d.0 / self.cellcount)).floor() as i32,
+            ((y - d.1 / 2.) / d.1 * (self.cellcount / self.ar)).floor() as i32,
         )
     }
 
     pub fn set_size(&mut self, s: i32) -> &mut Self {
-        self.size = s as f64;
+        self.cellcount = s as f64;
         self
     }
     pub fn set_ar(&mut self, ar: f64) -> &mut Self {

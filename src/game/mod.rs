@@ -4,11 +4,9 @@ use piston_window::Context;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+pub mod block;
 pub mod overlay;
 pub mod world;
-
-pub use overlay::Grid;
-use overlay::Overlay;
 
 pub trait Drawable {
     fn draw(

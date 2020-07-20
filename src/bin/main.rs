@@ -38,8 +38,8 @@ fn main() {
     while let Some(e) = window.next() {
         window.draw_2d(&e, |c, g, _| {
             clear([0.0, 0.0, 0.0, 1.0], g);
-            grid.draw(ar, dim.clone(), c, g);
             world.draw(grid.size() as f64, dim.clone(), c, g);
+            grid.draw(ar, dim.clone(), c, g);
         });
         e.mouse_cursor(|pos| {
             cursor = pos;
@@ -53,7 +53,7 @@ fn main() {
             }
         }
         e.mouse_scroll(|d| {
-            grid.set_size(grid.size() + d[1] as i32);
+            grid.set_size(grid.size() + 2 * d[1] as i32);
         });
         if let Some(button) = e.press_args() {
             use piston_window::Button::Keyboard;
