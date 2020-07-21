@@ -1,17 +1,30 @@
 use piston_window::{
-    self, clear, ellipse, rectangle, AdvancedWindow, Button, Event, Key, OpenGL, PistonWindow,
-    RenderArgs, RenderEvent, ResizeEvent, WindowSettings,
+    self,
+    clear,
+    ellipse,
+    rectangle,
+    AdvancedWindow,
+    Button,
+    Event,
+    Key,
+    OpenGL,
+    PistonWindow,
+    RenderArgs,
+    RenderEvent,
+    ResizeEvent,
+    WindowSettings,
 };
 
 use sdl2_window::Sdl2Window;
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 
 use piston_window::*;
 
-use ca03::game::overlay::Grid;
-use ca03::game::overlay::Overlay;
-use ca03::game::{world::World, Drawable};
+use ca03::game::{
+    overlay::{Grid, Overlay},
+    world::World,
+    Drawable,
+};
 
 fn main() {
     let opengl = OpenGL::V4_5;

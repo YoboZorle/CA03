@@ -1,6 +1,5 @@
 use super::{overlay::Overlay, Drawable};
-use gfx_device_gl::CommandBuffer;
-use gfx_device_gl::Resources;
+use gfx_device_gl::{CommandBuffer, Resources};
 use gfx_graphics::GfxGraphics;
 use na::Point4;
 use nalgebra as na;
@@ -9,7 +8,7 @@ use rectangle::square;
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 pub struct World {
-    origin: Point4<u64>,
+    origin:   Point4<u64>,
     entities: HashMap<Point4<i32>, i32>,
     overlays: Vec<Box<dyn Overlay>>,
 }
@@ -62,10 +61,17 @@ impl World {
         }
     }
 
-    pub fn add(&mut self, pos: (i32, i32)) {
+    pub fn add(
+        &mut self,
+        pos: (i32, i32),
+    ) {
         self.entities.insert(Point4::new(pos.0, pos.1, 0, 0), 0);
     }
-    pub fn remove(&mut self, pos: (i32, i32)) {
+
+    pub fn remove(
+        &mut self,
+        pos: (i32, i32),
+    ) {
         self.entities.remove(&Point4::new(pos.0, pos.1, 0, 0));
     }
 }

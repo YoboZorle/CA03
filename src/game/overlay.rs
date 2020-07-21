@@ -1,17 +1,15 @@
 use gfx_device_gl::{CommandBuffer, Resources};
 use gfx_graphics::GfxGraphics;
-use piston_window::line;
-use piston_window::Context;
+use piston_window::{line, Context};
 
 use super::Drawable;
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 
 pub struct Grid {
-    dim: Rc<RefCell<(f64, f64)>>,
-    show: bool,
+    dim:       Rc<RefCell<(f64, f64)>>,
+    show:      bool,
     cellcount: f64,
-    ar: f64,
+    ar:        f64,
 }
 
 pub trait Overlay {
@@ -20,12 +18,9 @@ pub trait Overlay {
 }
 
 impl Overlay for Grid {
-    fn size(&self) -> i32 {
-        self.cellcount.abs() as i32
-    }
-    fn toggle(&mut self) {
-        self.show = !self.show;
-    }
+    fn size(&self) -> i32 { self.cellcount.abs() as i32 }
+
+    fn toggle(&mut self) { self.show = !self.show; }
 }
 impl Drawable for Grid {
     fn draw(
@@ -41,11 +36,11 @@ impl Drawable for Grid {
             let height = screen.1 / self.cellcount * ar;
             (0..self.cellcount as i32 + 1)
                 .map(|i| {
-                    let cs = screen.1 / 2. + (i as f64 - self.cellcount / 2.) * height;
-                    (
-                        [i as f64 * width, 0., i as f64 * width, screen.1],
-                        [0., cs, screen.0, cs],
-                    )
+                    let cs =
+                        screen.1 / 2. + (i as f64 - self.cellcount / 2.) * height;
+                    ([i as f64 * width, 0., i as f64 * width, screen.1], [
+                        0., cs, screen.0, cs,
+                    ])
                 })
                 .for_each(|(v, h)| {
                     line([1.; 4], 1.0, v, c.transform, g);
@@ -56,7 +51,12 @@ impl Drawable for Grid {
 }
 
 impl Grid {
-    pub fn new(show: bool, size: f64, ar: Option<f64>, dim: Rc<RefCell<(f64, f64)>>) -> Self {
+    pub fn new(
+        show: bool,
+        size: f64,
+        ar: Option<f64>,
+        dim: Rc<RefCell<(f64, f64)>>,
+    ) -> Self {
         let show = show;
         let ar = ar.unwrap_or(1.);
         let cellcount = size;
@@ -68,7 +68,11 @@ impl Grid {
         }
     }
 
-    pub fn get_pos(&self, x: f64, y: f64) -> (i32, i32) {
+    pub fn get_pos(
+        &self,
+        x: f64,
+        y: f64,
+    ) -> (i32, i32) {
         let d = self.dim.borrow();
         (
             ((x - d.0 / 2.) / (d.0 / self.cellcount)).floor() as i32,
@@ -76,11 +80,18 @@ impl Grid {
         )
     }
 
-    pub fn set_size(&mut self, s: i32) -> &mut Self {
+    pub fn set_size(
+        &mut self,
+        s: i32,
+    ) -> &mut Self {
         self.cellcount = s as f64;
         self
     }
-    pub fn set_ar(&mut self, ar: f64) -> &mut Self {
+
+    pub fn set_ar(
+        &mut self,
+        ar: f64,
+    ) -> &mut Self {
         self.ar = ar as f64;
         self
     }
