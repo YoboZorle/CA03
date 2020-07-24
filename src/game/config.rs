@@ -1,8 +1,8 @@
 #[derive(Debug, Serialize, Deserialize)]
 struct Config {
-    refresh_rate:   i32,
+    frame_rate:     u64,
     fullscreen:     bool,
     capture_cursor: bool,
     exit_on_esc:    bool,
-    grid_size:      i32,
+    grid_size:      f64,
 }

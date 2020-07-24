@@ -1,0 +1,5 @@
+capture_cursor = false
+exit_on_esc = true
+framerate = 120
+fullscreen = false
+grid_size = 20

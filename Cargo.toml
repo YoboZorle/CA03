@@ -13,30 +13,32 @@ rev = "6185aa7"
 [package.metadata.vcpkg.target]
 x86_64-pc-windows-msvc = {triplet = "x64-windows-static-md", install = ["sdl2"]}
 
-[target.'cfg(unix)'.dependencies.sdl2]
-version = "*"
-
 [target.'cfg(windows)'.dependencies.sdl2]
 features = ["static-link", "use-vcpkg"]
 version = "*"
 
-[dependencies.pistoncore-sdl2_window]
-git = "https://github.com/PistonDevelopers/sdl2_window"
-
 [dependencies]
+gfx = "*"
+gfx_device_gl = "*"
+sdl2 = "*"
+
 piston2d-deform_grid = "*"
 piston2d-gfx_graphics = "*"
 piston_window = "*"
 pistoncore-window = "*"
 
-gfx = "*"
-gfx_device_gl = "*"
-shader_version = "*"
-
-camera_controllers = "*"
-
 nalgebra = "*"
+
+lazy_static = "*"
 rand = "*"
 rayon = "*"
+serde = "*"
 
+camera_controllers = "*"
+shader_version = "*"
+
+config = "*"
 find_folder = "*"
+
+[dependencies.pistoncore-sdl2_window]
+git = "https://github.com/PistonDevelopers/sdl2_window"
