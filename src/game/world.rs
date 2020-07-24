@@ -1,5 +1,7 @@
 use super::{
+    block::Block,
     overlay::{Grid, Overlay},
+    settings,
     Drawable,
 };
 use gfx_device_gl::{CommandBuffer, Resources};
@@ -16,10 +18,11 @@ use std::{
 
 pub struct World {
     origin:    Point4<u64>,
-    entities:  HashMap<Point4<i32>, i32>,
+    entities:  HashMap<Point4<i32>, Block>,
     overlays:  HashMap<u32, Box<dyn Overlay>>,
     exclusive: HashSet<TypeId>,
     pub grid:  Grid,
+    ups:       f64,
 }
 impl Default for World {
     fn default() -> Self {
@@ -28,15 +31,18 @@ impl Default for World {
         let overlays = HashMap::new();
         let exclusive = HashSet::new();
         let grid = Grid::default();
+        let ups = settings::<f64>("framerate");
         Self {
             origin,
             entities,
             overlays,
             exclusive,
             grid,
+            ups,
         }
     }
 }
+
 impl Drawable for World {
     fn draw(
         &self,
@@ -48,12 +54,17 @@ impl Drawable for World {
         let s = screen.borrow();
         let cellsize = s.0 / size;
         let ar = s.0 / s.1;
-        self.entities.keys().for_each(|a| {
+        self.entities.values().for_each(|a| {
             rectangle(
-                [1., 0., 0., 1.],
                 [
-                    (s.0 / 2. + a.x as f64 * cellsize),
-                    (s.1 / 2. + a.y as f64 * cellsize),
+                    (a.growth().x / size) as f32 * a.pos().x.abs() as f32,
+                    (a.growth().x / size) as f32 * a.pos().y.abs() as f32,
+                    (a.growth().x / size) as f32 * a.pos().z.abs() as f32,
+                    1.,
+                ],
+                [
+                    (s.0 / 2. + a.pos().x as f64 * cellsize),
+                    (s.1 / 2. + a.pos().y as f64 * cellsize),
                     cellsize,
                     cellsize,
                 ],
@@ -75,6 +86,7 @@ impl World {
         let overlays = HashMap::new();
         let exclusive = HashSet::new();
         let grid = Grid::default();
+        let ups = settings::<f64>("framerate");
 
         Self {
             origin,
@@ -82,6 +94,7 @@ impl World {
             overlays,
             exclusive,
             grid,
+            ups,
         }
     }
 
@@ -89,7 +102,20 @@ impl World {
         &mut self,
         pos: (i32, i32),
     ) {
-        self.entities.insert(Point4::new(pos.0, pos.1, 0, 0), 0);
+        let loc = Point4::new(pos.0, pos.1, 0, 0);
+        self.entities.insert(
+            loc,
+            Block::new(
+                loc,
+                Point4::new(0., 1., 1. / 10. * self.ups, 1.),
+                0u128,
+                vec![],
+                vec![],
+                Some(false),
+                Some(false),
+                Some(true),
+            ),
+        );
     }
 
     pub fn remove(
@@ -138,5 +164,9 @@ impl World {
         p: Point4<u64>,
     ) {
         self.origin += p.coords;
+    }
+
+    pub fn update(&mut self) {
+        self.entities.iter_mut().for_each(|(_, v)| v.update());
     }
 }

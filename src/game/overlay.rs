@@ -4,6 +4,7 @@ use piston_window::{line, Context};
 
 use super::Drawable;
 use std::{cell::RefCell, rc::Rc};
+
 pub trait Overlay {
     fn is_exclusive(&self) -> bool;
     fn size(&self) -> i32;
@@ -16,15 +17,6 @@ pub trait Overlay {
         g: &mut GfxGraphics<Resources, CommandBuffer>,
     );
 }
-
-#[derive(Default)]
-pub struct Grid {
-    show:      bool,
-    cellcount: f64,
-    ar:        f64,
-    dim:       Rc<RefCell<(f64, f64)>>,
-}
-
 impl Drawable for Grid {
     fn draw(
         &self,
@@ -52,7 +44,30 @@ impl Drawable for Grid {
         }
     }
 }
+impl Overlay for Grid {
+    fn is_exclusive(&self) -> bool { true }
 
+    fn size(&self) -> i32 { self.cellcount.abs() as i32 }
+
+    fn toggle(&mut self) { self.show = !self.show; }
+
+    fn draw(
+        &self,
+        ar: f64,
+        screen: Rc<RefCell<(f64, f64)>>,
+        c: Context,
+        g: &mut GfxGraphics<Resources, CommandBuffer>,
+    ) {
+        Drawable::draw(self, ar, screen, c, g);
+    }
+}
+#[derive(Default)]
+pub struct Grid {
+    show:      bool,
+    cellcount: f64,
+    ar:        f64,
+    dim:       Rc<RefCell<(f64, f64)>>,
+}
 impl Grid {
     pub fn new(
         show: bool,
@@ -97,23 +112,5 @@ impl Grid {
     ) -> &mut Self {
         self.ar = ar as f64;
         self
-    }
-}
-
-impl Overlay for Grid {
-    fn is_exclusive(&self) -> bool { true }
-
-    fn size(&self) -> i32 { self.cellcount.abs() as i32 }
-
-    fn toggle(&mut self) { self.show = !self.show; }
-
-    fn draw(
-        &self,
-        ar: f64,
-        screen: Rc<RefCell<(f64, f64)>>,
-        c: Context,
-        g: &mut GfxGraphics<Resources, CommandBuffer>,
-    ) {
-        Drawable::draw(self, ar, screen, c, g);
     }
 }

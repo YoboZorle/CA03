@@ -17,7 +17,7 @@ use piston_window::{
     *,
 };
 use sdl2_window::Sdl2Window;
-use std::{cell::RefCell, rc::Rc, sync::RwLock};
+use std::{cell::RefCell, rc::Rc};
 
 fn main() {
     let opengl = OpenGL::V4_5;
@@ -46,6 +46,7 @@ fn main() {
     while let Some(e) = window.next() {
         window.draw_2d(&e, |c, g, _| {
             clear([0.0, 0.0, 0.0, 1.0], g);
+            world.update();
             world.draw(world.grid.size() as f64, dim.clone(), c, g);
         });
         e.mouse_cursor(|pos| {
