@@ -15,6 +15,7 @@ use std::{
     collections::{HashMap, HashSet},
     rc::Rc,
 };
+extern crate fps_counter;
 
 pub struct World {
     origin:    Point4<u64>,
@@ -54,13 +55,14 @@ impl Drawable for World {
         let s = screen.borrow();
         let cellsize = s.0 / size;
         let ar = s.0 / s.1;
+
         self.entities.values().for_each(|a| {
             rectangle(
                 [
-                    (a.growth().x / size) as f32 * a.pos().x.abs() as f32,
-                    (a.growth().x / size) as f32 * a.pos().y.abs() as f32,
-                    (a.growth().x / size) as f32 * a.pos().z.abs() as f32,
-                    1.,
+                    (a.filled() / size) as f32 * a.pos().x.abs() as f32,
+                    (a.filled() / size) as f32 * a.pos().y.abs() as f32,
+                    (a.filled() / size) as f32 * a.pos().z.abs() as f32,
+                    a.filled() as f32,
                 ],
                 [
                     (s.0 / 2. + a.pos().x as f64 * cellsize),

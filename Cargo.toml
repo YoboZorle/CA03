@@ -22,6 +22,7 @@ gfx = "*"
 gfx_device_gl = "*"
 sdl2 = "*"
 
+fps_counter = {version = "*", git = "https://github.com/PistonDevelopers/fps_counter"}
 piston2d-deform_grid = "*"
 piston2d-gfx_graphics = "*"
 piston_window = "*"

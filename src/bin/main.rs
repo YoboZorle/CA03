@@ -30,27 +30,30 @@ fn main() {
         .unwrap();
     window.set_capture_cursor(settings::<bool>("capture_cursor"));
     window.set_max_fps(settings::<u64>("framerate"));
+    window.set_ups(settings::<u64>("framerate"));
 
     let dim = Rc::new(RefCell::new({
         let Size { width, height } = window.window.draw_size();
         (width, height)
     }));
     let mut ar = dim.borrow().0 / dim.borrow().1;
-
+    let mut cursor = [0.0, 0.0];
+    let mut fps = fps_counter::FPSCounter::new();
     let mut world = World::default();
+
     world.grid =
         Grid::new(true, Some(ar), settings::<f64>("grid_size"), dim.clone());
-
-    let mut cursor = [0.0, 0.0];
 
     while let Some(e) = window.next() {
         window.draw_2d(&e, |c, g, _| {
             clear([0.0, 0.0, 0.0, 1.0], g);
-            world.update();
             world.draw(world.grid.size() as f64, dim.clone(), c, g);
         });
         e.mouse_cursor(|pos| {
             cursor = pos;
+        });
+        e.mouse_scroll(|d| {
+            &world.grid.set_size(&world.grid.size() + 2 * d[1] as i32);
         });
         if let Some(Button::Mouse(button)) = e.press_args() {
             if button == MouseButton::Left {
@@ -60,9 +63,7 @@ fn main() {
                 world.remove(world.grid.get_pos(cursor[0], cursor[1]));
             }
         }
-        e.mouse_scroll(|d| {
-            &world.grid.set_size(&world.grid.size() + 2 * d[1] as i32);
-        });
+
         if let Some(button) = e.press_args() {
             use piston_window::Button::Keyboard;
 
@@ -77,6 +78,14 @@ fn main() {
             dim.replace((width, height));
             ar = width / height;
             &world.grid.set_ar(ar);
+        }
+        if let Some(_args) = e.idle_args() {
+            // println!("{}", args.dt);
+        }
+        if let Some(_args) = e.update_args() {
+            // println!("{}", args.dt);
+            // println!("{}", fps.tick());
+            world.update();
         }
     }
 }
