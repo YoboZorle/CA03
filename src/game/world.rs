@@ -4,6 +4,7 @@ use super::{
     settings,
     Drawable,
 };
+use fps_counter::FPSCounter;
 use gfx_device_gl::{CommandBuffer, Resources};
 use gfx_graphics::GfxGraphics;
 use na::Point4;
@@ -23,25 +24,8 @@ pub struct World {
     overlays:  HashMap<u32, Box<dyn Overlay>>,
     exclusive: HashSet<TypeId>,
     pub grid:  Grid,
+    pub fps:   FPSCounter,
     ups:       f64,
-}
-impl Default for World {
-    fn default() -> Self {
-        let origin = Point4::<u64>::new(0, 0, 0, 0);
-        let entities = HashMap::new();
-        let overlays = HashMap::new();
-        let exclusive = HashSet::new();
-        let grid = Grid::default();
-        let ups = settings::<f64>("framerate");
-        Self {
-            origin,
-            entities,
-            overlays,
-            exclusive,
-            grid,
-            ups,
-        }
-    }
 }
 
 impl Drawable for World {
@@ -81,14 +65,15 @@ impl Drawable for World {
         //     .for_each(drop);
     }
 }
-impl World {
-    pub fn new() -> Self {
+impl Default for World {
+    fn default() -> Self {
         let origin = Point4::<u64>::new(0, 0, 0, 0);
         let entities = HashMap::new();
         let overlays = HashMap::new();
         let exclusive = HashSet::new();
         let grid = Grid::default();
-        let ups = settings::<f64>("framerate");
+        let fps = fps_counter::FPSCounter::new();
+        let ups = 2. * settings::<f64>("framerate");
 
         Self {
             origin,
@@ -96,6 +81,28 @@ impl World {
             overlays,
             exclusive,
             grid,
+            fps,
+            ups,
+        }
+    }
+}
+impl World {
+    pub fn new() -> Self {
+        let origin = Point4::<u64>::new(0, 0, 0, 0);
+        let entities = HashMap::new();
+        let overlays = HashMap::new();
+        let exclusive = HashSet::new();
+        let grid = Grid::default();
+        let fps = fps_counter::FPSCounter::new();
+        let ups = 2. * settings::<f64>("framerate");
+
+        Self {
+            origin,
+            entities,
+            overlays,
+            exclusive,
+            grid,
+            fps,
             ups,
         }
     }
