@@ -1,5 +1,6 @@
 [package]
 authors = ["simdimdim <simdimdim@gmail.com>"]
+default-run = "main"
 edition = "2018"
 name = "ca03"
 version = "0.1.0"

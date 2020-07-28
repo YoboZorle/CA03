@@ -27,7 +27,6 @@ pub struct World {
     pub fps:   FPSCounter,
     ups:       f64,
 }
-
 impl Drawable for World {
     fn draw(
         &self,
@@ -58,6 +57,7 @@ impl Drawable for World {
                 g,
             );
         });
+
         Drawable::draw(&self.grid, ar, screen.clone(), c, g);
         // self.overlays
         //     .values()

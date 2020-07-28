@@ -1,4 +1,6 @@
 use ca03::game::{
+    self,
+    block,
     overlay::{Grid, Overlay},
     settings,
     world::World,
@@ -21,14 +23,15 @@ use std::{cell::RefCell, rc::Rc};
 extern crate find_folder;
 
 fn main() {
+    // block::step([1; 16], 257, vec![2]);
     let assets = find_folder::Search::ParentsThenKids(3, 3)
         .for_folder("assets")
         .unwrap();
 
     let opengl = OpenGL::V4_5;
     let title = "CA03)";
-    let mut window: PistonWindow<Sdl2Window> = WindowSettings::new(title, [800, 600])
-        .exit_on_esc( settings::<bool>("exit_on_esc") )
+    let mut window: PistonWindow<Sdl2Window> = WindowSettings::new(title,
+    [800, 600])     .exit_on_esc( settings::<bool>("exit_on_esc") )
         // .samples(16)
         .graphics_api(opengl)
         .build()
